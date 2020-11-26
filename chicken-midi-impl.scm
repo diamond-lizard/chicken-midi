@@ -10,6 +10,17 @@
 (define midi-header-length-field-length
   (bytevector-length midi-header-length-field))
 
+(define midi-header-format-field-length 4)
+(define midi-header-tracks-field-length 4)
+(define midi-header-division-field-length 4)
+
+(define midi-header-length
+  (+
+   midi-header-chunk-type-length
+   midi-header-format-field-length
+   midi-header-tracks-field-length
+   midi-header-division-field-length))
+
 ;; For MIDI version 1.1, the chunk type and length of a MIDI header
 ;; are pre-defined, so we simply check to make sure they have their
 ;; expected values, and then return the only variable parts
@@ -19,14 +30,14 @@
 ;; of the MIDI file, in binary format.
 (define (midi-read-header filename)
   (if (file-exists? filename)
-      (if (< (file-size filename) 14)
+      (if (< (file-size filename) midi-header-length)
           (error "midi-read-file: file too short to be a valid MIDI file")
           (let* ((port (open-binary-input-file filename))
-                 (chunk-type (read-bytevector 4 port))
-                 (len (read-bytevector 4 port))
-                 (format (read-bytevector 4 port))
-                 (tracks (read-bytevector 4 port))
-                 (division (read-bytevector 4 port)))
+                 (chunk-type (read-bytevector midi-header-chunk-type-length port))
+                 (len (read-bytevector midi-header-length-field-length port))
+                 (format (read-bytevector midi-header-format-field-length port))
+                 (tracks (read-bytevector midi-header-tracks-field-length port))
+                 (division (read-bytevector midi-header-division-field-length port)))
             (if (equal? chunk-type midi-header-chunk-type)
                 (if (equal? len midi-header-length-field)
                     (let ((format
