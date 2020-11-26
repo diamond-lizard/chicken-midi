@@ -1,0 +1,11 @@
+;;; chicken-midi.egg -*- Scheme -*- vim: ft=scheme:
+
+((author "Sergey Goldgaber")
+ (maintainer "Sergey Goldgaber")
+ (synopsis "MIDI-related functions")
+ (version "0.1")
+ (category data)
+ (dependencies srfi-4 srfi-178)
+ (test-dependencies test)
+ (license "AGPL")
+ (components (extension chicken-midi)))
