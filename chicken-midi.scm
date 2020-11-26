@@ -4,7 +4,6 @@
   (import (scheme file))
   (import (scheme write))
 
-  (import srfi-4)
   (import srfi-178)
 
   (export
