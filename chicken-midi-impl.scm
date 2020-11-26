@@ -42,33 +42,9 @@
               (6 32 big)
               (format 16)
               (tracks 16)
+              (division 16)
               (rest bitstring))
-             (let ((format
-                    (match format
-                      (0 0)
-                      (1 1)
-                      (2 2)
-                      (else (error "midi-read-header: unexpected format"))))
-                   (division
-                    (bitmatch
-                     rest
-                     (((0 1)
-                       (ticks-per-quarter-note 15)
-                       (rest bitstring))
-                      (list
-                       'ticks-per-quarter-note ticks-per-quarter-note))
-                     (((1 1)
-                       (frames-per-sec 7)
-                       (ticks-per-frame 8)
-                       (rest bitstring))
-                      (list
-                       'frames-per-sec
-                       (- 0 frames-per-sec)
-                       'ticks-per-frame
-                       ticks-per-frame))
-                     (else
-                      (print "midi-read-header: invalid division")))))
-               (list format tracks division rest)))
+             (list format tracks division rest))
             (else (print "midi-read-header: invalid header"))))
 
 (define (midi-read-file filename)
@@ -77,7 +53,36 @@
           (midi-read-header file-as-bytevector)))
     (match result
       ((format tracks division rest)
-       (begin
+       (let ((division (midi-parse-division division)))
+         (midi-validate-format format)
          (printf "format: '~S'~%" format)
          (printf "tracks: '~S'~%" tracks)
          (printf "division: '~S'~%" division))))))
+
+(define (midi-validate-format format)
+  (match format
+    (0 0)
+    (1 1)
+    (2 2)
+    (else (error "midi-read-header: unexpected format"))))
+
+(define (midi-parse-division division)
+  (bitmatch
+   ;; division comes in as an integer, which bitmatch won't work with,
+   ;; so we need to turn it back in to a bitstring:
+   (bitconstruct (division 16))
+   ;; Now we can match against it:
+   (((0 1)
+     (ticks-per-quarter-note 15))
+    (list
+     'ticks-per-quarter-note ticks-per-quarter-note))
+   (((1 1)
+     (frames-per-sec 7)
+     (ticks-per-frame 8))
+    (list
+     'frames-per-sec
+     (- 0 frames-per-sec)
+     'ticks-per-frame
+     ticks-per-frame))
+   (else
+    (print "midi-read-header: invalid division"))))
