@@ -43,6 +43,8 @@
    midi-header-tracks-field-length-in-bytes
    midi-header-division-field-length-in-bytes))
 
+(define-constant midi-ticks-per-quarter-note-field-length-in-bits 15)
+
 (define (midi-read-file-as-bytevector filename)
   (if (file-exists? filename)
       (let ((size (file-size filename)))
@@ -97,7 +99,7 @@
    (bitconstruct (division midi-header-division-field-length-in-bits))
    ;; Now we can match against it:
    (((0 1)
-     (ticks-per-quarter-note 15))
+     (ticks-per-quarter-note midi-ticks-per-quarter-note-field-length-in-bits))
     (list
      'ticks-per-quarter-note ticks-per-quarter-note))
    (((1 1)
