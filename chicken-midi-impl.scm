@@ -1,3 +1,5 @@
+;; For MIDI version 1.1, a length of 6 is the only currently valid length of
+;; the data portion of a MIDI header.
 (define-constant expected-len #u8(0 0 0 6))
 
 (define (midi-read-header filename)
