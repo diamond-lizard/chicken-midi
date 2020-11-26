@@ -3,6 +3,4 @@
     (print file)))
 
 (define (midi-open-file filename mode)
-  (call-with-input-file filename
-    (lambda (port)
-      (midi-read-from-port port))))
+  (call-with-input-file filename midi-read-from-port))
