@@ -1,6 +1,8 @@
 ;; For MIDI version 1.1, the chunk type must be:
 (define midi-header-chunk-type (string->utf8 "MThd"))
 
+(define midi-header-chunk-type-length (bytevector-length midi-header-chunk-type))
+
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
 (define-constant expected-len #u8(0 0 0 6))
