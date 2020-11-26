@@ -1,12 +1,10 @@
 (module chicken-midi ()
-  (import scheme)
-  (import (chicken base))
-  (import (chicken module))
+  (import r7rs)
 
   (import srfi-4)
   (import srfi-178)
 
   (export
-   midi-open-file)
+   midi-read-file)
 
   (include "chicken-midi-impl.scm"))

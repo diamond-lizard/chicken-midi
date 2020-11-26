@@ -1,1 +1,1 @@
-(midi-open-file "midi/01.midi" 'read)
+(midi-read-file "midi/01.midi")
