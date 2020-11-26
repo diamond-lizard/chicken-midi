@@ -1,29 +1,36 @@
+(define-constant bits-per-byte 8)
+
 ;; For MIDI version 1.1, the chunk type must be:
 (define-constant midi-header-chunk-type "MThd")
-(define midi-header-chunk-type-length 32) ; in bits
+(define midi-header-chunk-type-length-in-bytes
+  (string-length midi-header-chunk-type))
+(define midi-header-chunk-type-length-in-bits
+  (*
+   midi-header-chunk-type-length-in-bytes
+   bits-per-byte))
 
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
 (define-constant midi-header-length-field #u8(0 0 0 6))
 
-(define midi-header-length-field-length
+(define midi-header-length-field-length-in-bytes
   (bytevector-length midi-header-length-field))
 
-(define midi-header-format-field-length   2)
-(define midi-header-tracks-field-length   2)
-(define midi-header-division-field-length 2)
+(define midi-header-format-field-length-in-bytes   2)
+(define midi-header-tracks-field-length-in-bytes   2)
+(define midi-header-division-field-length-in-bytes 2)
 
-(define midi-header-length
+(define midi-header-length-in-bytes
   (+
-   midi-header-chunk-type-length
-   midi-header-format-field-length
-   midi-header-tracks-field-length
-   midi-header-division-field-length))
+   midi-header-chunk-type-length-in-bytes
+   midi-header-format-field-length-in-bytes
+   midi-header-tracks-field-length-in-bytes
+   midi-header-division-field-length-in-bytes))
 
 (define (midi-read-file-as-bytevector filename)
   (if (file-exists? filename)
       (let ((size (file-size filename)))
-        (if (< size midi-header-length)
+        (if (< size midi-header-length-in-bytes)
             (error "midi-read-file: file too short to be a valid MIDI file")
             (let* ((port (open-binary-input-file filename))
                    (file-as-bytevector (read-bytevector size port)))
@@ -38,7 +45,7 @@
 ;; We also return the rest of the file as a bitstring
 (define (midi-read-header file-as-bytevector)
   (bitmatch file-as-bytevector
-            (((#x4d546864 midi-header-chunk-type-length)
+            (((#x4d546864 midi-header-chunk-type-length-in-bits)
               (6 32 big)
               (format 16)
               (tracks 16)
