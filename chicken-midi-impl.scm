@@ -10,9 +10,9 @@
 (define midi-header-length-field-length
   (bytevector-length midi-header-length-field))
 
-(define midi-header-format-field-length 4)
-(define midi-header-tracks-field-length 4)
-(define midi-header-division-field-length 4)
+(define midi-header-format-field-length   2)
+(define midi-header-tracks-field-length   2)
+(define midi-header-division-field-length 2)
 
 (define midi-header-length
   (+
@@ -43,9 +43,9 @@
                 (if (equal? len midi-header-length-field)
                     (let ((format
                            (match format
-                             (#u8(0 0 0 0) 0)
-                             (#u8(0 0 0 1) 1)
-                             (#u8(0 0 0 2) 2)
+                             (#u8(0 0) 0)
+                             (#u8(0 1) 1)
+                             (#u8(0 2) 2)
                              (else
                               (error
                                "midi-read-header: unexpected format" format)))))
