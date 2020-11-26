@@ -7,6 +7,9 @@
 ;; the data portion of a MIDI header.
 (define-constant midi-header-length-field #u8(0 0 0 6))
 
+(define midi-header-length-field-length
+  (bytevector-length midi-header-length-field))
+
 ;; For MIDI version 1.1, the chunk type and length of a MIDI header
 ;; are pre-defined, so we simply check to make sure they have their
 ;; expected values, and then return the only variable parts
