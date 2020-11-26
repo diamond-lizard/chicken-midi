@@ -32,17 +32,13 @@
   (if (file-exists? filename)
       (if (< (file-size filename) midi-header-length)
           (error "midi-read-file: file too short to be a valid MIDI file")
-          (let* ((port (open-binary-input-file filename))
-                 (chunk-type
-                  (read-bytevector midi-header-chunk-type-length     port))
-                 (len
-                  (read-bytevector midi-header-length-field-length   port))
-                 (format
-                  (read-bytevector midi-header-format-field-length   port))
-                 (tracks
-                  (read-bytevector midi-header-tracks-field-length   port))
-                 (division
-                  (read-bytevector midi-header-division-field-length port)))
+          (let*
+              ((port (open-binary-input-file filename))
+               (chunk-type (read-bytevector midi-header-chunk-type-length     port))
+               (len        (read-bytevector midi-header-length-field-length   port))
+               (format     (read-bytevector midi-header-format-field-length   port))
+               (tracks     (read-bytevector midi-header-tracks-field-length   port))
+               (division   (read-bytevector midi-header-division-field-length port)))
             (if (equal? chunk-type midi-header-chunk-type)
                 (if (equal? len midi-header-length-field)
                     (let ((format
