@@ -59,6 +59,7 @@
          (printf "tracks: '~S'~%" tracks)
          (printf "division: '~S'~%" division))))))
 
+;; For MIDI 1.1, the only valid formats are 0, 1, and 2
 (define (midi-validate-format format)
   (match format
     (0 0)
