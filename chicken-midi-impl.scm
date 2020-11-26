@@ -12,7 +12,15 @@
                  (division (read-bytevector 4 port)))
             (if (equal? chunk-type expected-chunk-type)
                 (if (equal? len expected-len)
-                    (values format tracks division port)
+                    (let ((format
+                           (match format
+                             (#u8(0 0 0 0) 0)
+                             (#u8(0 0 0 1) 1)
+                             (#u8(0 0 0 2) 2)
+                             (else
+                              (error
+                               "midi-read-header: unexpected format" format)))))
+                      (values format tracks division port))
                     (error "midi-read-header: unexpected length" len))
                 (error "midi-read-header: unexpected chunk-type" chunk-type))))
       (error "midi-read-header: non-existant file" filename)))
