@@ -1,0 +1,13 @@
+* chicken-midi
+** Synopsis
+MIDI-related functions for Chicken Scheme
+** Features
+ * read MIDI files
+** Procedures
+ * midi-open-file FILENAME MODE
+   FILENAME - name of the file to open
+   MODE should be one of
+    "r" = open file for reading
+    "w" = open file for writing (not yet supported)
+** Version history
+ * 0.1 - Initial release for Chicken 5
