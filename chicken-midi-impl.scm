@@ -94,7 +94,7 @@
   (bitmatch
    ;; division comes in as an integer, which bitmatch won't work with,
    ;; so we need to turn it back in to a bitstring:
-   (bitconstruct (division 16))
+   (bitconstruct (division midi-header-division-field-length-in-bits))
    ;; Now we can match against it:
    (((0 1)
      (ticks-per-quarter-note 15))
