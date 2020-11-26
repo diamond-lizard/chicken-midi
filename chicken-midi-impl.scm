@@ -1,3 +1,6 @@
+;; For MIDI version 1.1, the chunk type must be:
+(define midi-header-chunk-type (string->utf8 "MThd"))
+
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
 (define-constant expected-len #u8(0 0 0 6))
@@ -15,12 +18,11 @@
           (error "midi-read-file: file too short to be a valid MIDI file")
           (let* ((port (open-binary-input-file filename))
                  (chunk-type (read-bytevector 4 port))
-                 (expected-chunk-type (string->utf8 "MThd"))
                  (len (read-bytevector 4 port))
                  (format (read-bytevector 4 port))
                  (tracks (read-bytevector 4 port))
                  (division (read-bytevector 4 port)))
-            (if (equal? chunk-type expected-chunk-type)
+            (if (equal? chunk-type midi-header-chunk-type)
                 (if (equal? len expected-len)
                     (let ((format
                            (match format
