@@ -35,7 +35,7 @@
 ;; expected values, and then return the only variable parts
 ;; of a MIDI header, which are: format, tracks, and division.
 ;;
-;; We also return the rest of the file as a bytevector
+;; We also return the rest of the file as a bitstring
 (define (midi-read-header file-as-bytevector)
   (bitmatch file-as-bytevector
             (((#x4d546864 32)
