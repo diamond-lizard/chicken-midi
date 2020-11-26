@@ -16,6 +16,10 @@
 (define midi-header-length-field-length-in-bytes
   (bytevector-length midi-header-length-field))
 
+(define midi-header-length-field-length-in-bits
+  (* midi-header-length-field-length-in-bytes
+     bits-per-byte))
+
 (define midi-header-format-field-length-in-bytes   2)
 (define midi-header-tracks-field-length-in-bytes   2)
 (define midi-header-division-field-length-in-bytes 2)
@@ -58,7 +62,7 @@
 (define (midi-read-header file-as-bytevector)
   (bitmatch file-as-bytevector
             (((#x4d546864 midi-header-chunk-type-length-in-bits)
-              (6 32 big)
+              (6 midi-header-length-field-length-in-bits big)
               (format midi-header-format-field-length-in-bits)
               (tracks midi-header-tracks-field-length-in-bits)
               (division midi-header-division-field-length-in-bits)
