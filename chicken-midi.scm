@@ -3,6 +3,7 @@
   ; r7rs libraries:
   (import (scheme file))
   (import (scheme write))
+  (import (chicken base))
   (import (chicken file posix))
 
   (import matchable)

@@ -1,3 +1,5 @@
+(define-constant expected-len #u8(0 0 0 6))
+
 (define (midi-read-header filename)
   (if (file-exists? filename)
       (if (< (file-size filename) 14)
@@ -6,7 +8,6 @@
                  (chunk-type (read-bytevector 4 port))
                  (expected-chunk-type (string->utf8 "MThd"))
                  (len (read-bytevector 4 port))
-                 (expected-len #u8(0 0 0 6))
                  (format (read-bytevector 4 port))
                  (tracks (read-bytevector 4 port))
                  (division (read-bytevector 4 port)))
