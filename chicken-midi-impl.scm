@@ -60,4 +60,6 @@
          division
          port
          (midi-read-header filename)))
-    '()))
+    (printf "format: '~S'~%" format)
+    (printf "tracks: '~S'~%" tracks)
+    (printf "division: '~S'~%" division)))
