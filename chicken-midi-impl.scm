@@ -1,7 +1,6 @@
 ;; For MIDI version 1.1, the chunk type must be:
-(define midi-header-chunk-type (string->utf8 "MThd"))
-
-(define midi-header-chunk-type-length (bytevector-length midi-header-chunk-type))
+(define-constant midi-header-chunk-type "MThd")
+(define midi-header-chunk-type-length (string-length midi-header-chunk-type))
 
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
@@ -21,45 +20,64 @@
    midi-header-tracks-field-length
    midi-header-division-field-length))
 
+(define (midi-read-file-as-bytevector filename)
+  (if (file-exists? filename)
+      (let ((size (file-size filename)))
+        (if (< size midi-header-length)
+            (error "midi-read-file: file too short to be a valid MIDI file")
+            (let* ((port (open-binary-input-file filename))
+                   (file-as-bytevector (read-bytevector size port)))
+              file-as-bytevector)))
+      (error "midi-read-header: non-existant file" filename)))
+
 ;; For MIDI version 1.1, the chunk type and length of a MIDI header
 ;; are pre-defined, so we simply check to make sure they have their
 ;; expected values, and then return the only variable parts
 ;; of a MIDI header, which are: format, tracks, and division.
 ;;
-;; We also return the port, which contains the remaining contents
-;; of the MIDI file, in binary format.
-(define (midi-read-header filename)
-  (if (file-exists? filename)
-      (if (< (file-size filename) midi-header-length)
-          (error "midi-read-file: file too short to be a valid MIDI file")
-          (let*
-              ((port (open-binary-input-file filename))
-               (chunk-type (read-bytevector midi-header-chunk-type-length     port))
-               (len        (read-bytevector midi-header-length-field-length   port))
-               (format     (read-bytevector midi-header-format-field-length   port))
-               (tracks     (read-bytevector midi-header-tracks-field-length   port))
-               (division   (read-bytevector midi-header-division-field-length port)))
-            (if (equal? chunk-type midi-header-chunk-type)
-                (if (equal? len midi-header-length-field)
-                    (let ((format
-                           (match format
-                             (#u8(0 0) 0)
-                             (#u8(0 1) 1)
-                             (#u8(0 2) 2)
-                             (else
-                              (error
-                               "midi-read-header: unexpected format" format)))))
-                      (values format tracks division port))
-                    (error "midi-read-header: unexpected length" len))
-                (error "midi-read-header: unexpected chunk-type" chunk-type))))
-      (error "midi-read-header: non-existant file" filename)))
+;; We also return the rest of the file as a bytevector
+(define (midi-read-header file-as-bytevector)
+  (bitmatch file-as-bytevector
+            (((#x4d546864 32)
+              (6 32 big)
+              (format 16)
+              (tracks 16)
+              (rest bitstring))
+             (let ((format
+                    (match format
+                      (0 0)
+                      (1 1)
+                      (2 2)
+                      (else (error "midi-read-header: unexpected format"))))
+                   (division
+                    (bitmatch
+                     rest
+                     (((0 1)
+                       (ticks-per-quarter-note 15)
+                       (rest bitstring))
+                      (list
+                       'ticks-per-quarter-note ticks-per-quarter-note))
+                     (((1 1)
+                       (frames-per-sec 7)
+                       (ticks-per-frame 8)
+                       (rest bitstring))
+                      (list
+                       'frames-per-sec
+                       (- 0 frames-per-sec)
+                       'ticks-per-frame
+                       ticks-per-frame))
+                     (else
+                      (print "midi-read-header: invalid division")))))
+               (list format tracks division rest)))
+            (else (print "midi-read-header: invalid header"))))
 
 (define (midi-read-file filename)
-  (let ((format
-         tracks
-         division
-         port
-         (midi-read-header filename)))
-    (printf "format: '~S'~%" format)
-    (printf "tracks: '~S'~%" tracks)
-    (printf "division: '~S'~%" division)))
+  (let* ((file-as-bytevector (midi-read-file-as-bytevector filename))
+         (result
+          (midi-read-header file-as-bytevector)))
+    (match result
+      ((format tracks division rest)
+       (begin
+         (printf "format: '~S'~%" format)
+         (printf "tracks: '~S'~%" tracks)
+         (printf "division: '~S'~%" division))))))
