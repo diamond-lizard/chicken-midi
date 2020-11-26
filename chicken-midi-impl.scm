@@ -2,6 +2,13 @@
 ;; the data portion of a MIDI header.
 (define-constant expected-len #u8(0 0 0 6))
 
+;; For MIDI version 1.1, the chunk type and length of a MIDI header
+;; are pre-defined, so we simply check to make sure they have their
+;; expected values, and then return the only variable parts
+;; of a MIDI header, which are: format, tracks, and division.
+;;
+;; We also return the port, which contains the remaining contents
+;; of the MIDI file, in binary format.
 (define (midi-read-header filename)
   (if (file-exists? filename)
       (if (< (file-size filename) 14)
