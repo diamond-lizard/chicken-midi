@@ -47,6 +47,8 @@
 
 (define-constant midi-frames-per-sec-field-length 7)
 
+(define-constant midi-ticks-per-frame-field-length-in-bits 8)
+
 (define (midi-read-file-as-bytevector filename)
   (if (file-exists? filename)
       (let ((size (file-size filename)))
@@ -106,7 +108,7 @@
      'ticks-per-quarter-note ticks-per-quarter-note))
    (((1 1)
      (frames-per-sec midi-frames-per-sec-field-length)
-     (ticks-per-frame 8))
+     (ticks-per-frame midi-ticks-per-frame-field-length-in-bits))
     (list
      'frames-per-sec
      (- 0 frames-per-sec)
