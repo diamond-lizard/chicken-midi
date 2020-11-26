@@ -5,7 +5,7 @@
 
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
-(define-constant expected-len #u8(0 0 0 6))
+(define-constant midi-header-length-field #u8(0 0 0 6))
 
 ;; For MIDI version 1.1, the chunk type and length of a MIDI header
 ;; are pre-defined, so we simply check to make sure they have their
@@ -25,7 +25,7 @@
                  (tracks (read-bytevector 4 port))
                  (division (read-bytevector 4 port)))
             (if (equal? chunk-type midi-header-chunk-type)
-                (if (equal? len expected-len)
+                (if (equal? len midi-header-length-field)
                     (let ((format
                            (match format
                              (#u8(0 0 0 0) 0)
