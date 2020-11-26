@@ -1,6 +1,6 @@
 ;; For MIDI version 1.1, the chunk type must be:
 (define-constant midi-header-chunk-type "MThd")
-(define midi-header-chunk-type-length (string-length midi-header-chunk-type))
+(define midi-header-chunk-type-length 32) ; in bits
 
 ;; For MIDI version 1.1, a length of 6 is the only currently valid length of
 ;; the data portion of a MIDI header.
@@ -38,7 +38,7 @@
 ;; We also return the rest of the file as a bitstring
 (define (midi-read-header file-as-bytevector)
   (bitmatch file-as-bytevector
-            (((#x4d546864 32)
+            (((#x4d546864 midi-header-chunk-type-length)
               (6 32 big)
               (format 16)
               (tracks 16)
