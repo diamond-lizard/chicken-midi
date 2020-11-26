@@ -5,6 +5,7 @@
   (import (scheme write))
   (import (chicken file posix))
 
+  (import srfi-71)
   (import srfi-178)
 
   (export
