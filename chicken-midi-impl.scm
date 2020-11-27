@@ -68,7 +68,7 @@
               (division midi-header-division-field-length-in-bits)
               (rest bitstring))
              (list format tracks division rest))
-            (else (print "midi-read-header: invalid header"))))
+            (else (error "midi-read-header: invalid header"))))
 
 (define (midi-read-file filename)
   (let* ((file-as-bytevector (midi-read-file-as-bytevector filename))
