@@ -1,3 +1,5 @@
+(define chicken-midi-debug 'on)
+
 (define-constant bits-per-byte 8)
 
 ;; For MIDI version 1.1, the chunk type must be:
