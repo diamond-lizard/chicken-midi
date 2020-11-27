@@ -43,12 +43,6 @@
    midi-header-tracks-field-length-in-bytes
    midi-header-division-field-length-in-bytes))
 
-(define-constant midi-ticks-per-quarter-note-field-length-in-bits 15)
-
-(define-constant midi-frames-per-sec-field-length-in-bits 7)
-
-(define-constant midi-ticks-per-frame-field-length-in-bits 8)
-
 (define (midi-read-file-as-bytevector filename)
   (if (file-exists? filename)
       (let ((size (file-size filename)))
@@ -97,22 +91,25 @@
     (else (error "midi-read-header: unexpected format"))))
 
 (define (midi-parse-division division)
-  (bitmatch
-   ;; division comes in as an integer, which bitmatch won't work with,
-   ;; so we need to turn it back in to a bitstring:
-   (bitconstruct (division midi-header-division-field-length-in-bits))
-   ;; Now we can match against it:
-   (((0 1)
-     (ticks-per-quarter-note midi-ticks-per-quarter-note-field-length-in-bits))
-    (list
-     'ticks-per-quarter-note ticks-per-quarter-note))
-   (((1 1)
-     (frames-per-sec  midi-frames-per-sec-field-length-in-bits)
-     (ticks-per-frame midi-ticks-per-frame-field-length-in-bits))
-    (list
-     'frames-per-sec
-     (- 0 frames-per-sec)
-     'ticks-per-frame
-     ticks-per-frame))
-   (else
-    (print "midi-read-header: invalid division"))))
+  (let ((ticks-per-quarter-note-field-length-in-bits 15)
+        (frames-per-sec-field-length-in-bits 7)
+        (ticks-per-frame-field-length-in-bits 8))
+    (bitmatch
+     ;; division comes in as an integer, which bitmatch won't work with,
+     ;; so we need to turn it back in to a bitstring:
+     (bitconstruct (division midi-header-division-field-length-in-bits))
+     ;; Now we can match against it:
+     (((0 1)
+       (ticks-per-quarter-note ticks-per-quarter-note-field-length-in-bits))
+      (list
+       'ticks-per-quarter-note ticks-per-quarter-note))
+     (((1 1)
+       (frames-per-sec  frames-per-sec-field-length-in-bits)
+       (ticks-per-frame ticks-per-frame-field-length-in-bits))
+      (list
+       'frames-per-sec
+       (- 0 frames-per-sec)
+       'ticks-per-frame
+       ticks-per-frame))
+     (else
+      (print "midi-read-header: invalid division")))))
