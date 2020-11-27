@@ -61,6 +61,11 @@
 ;; We also return the rest of the file as a bitstring
 (define (midi-read-header file-as-bytevector)
   (bitmatch file-as-bytevector
+            ;; Every MIDI header chunk type is "MThd", but
+            ;; unfortunately the bitstring egg seems to have a bug
+            ;; where it won't accept a string as a pattern, even
+            ;; though it should.  So we can't use a string here, but
+            ;; are forced to use the equivalent hexadecimal number:
             (((#x4d546864 midi-header-chunk-type-length-in-bits)
               (6 midi-header-length-field-length-in-bits)
               (format midi-header-format-field-length-in-bits)
