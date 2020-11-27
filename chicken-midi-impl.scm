@@ -112,4 +112,4 @@
        'ticks-per-frame
        ticks-per-frame))
      (else
-      (print "midi-read-header: invalid division")))))
+      (error "midi-read-header: invalid division")))))
