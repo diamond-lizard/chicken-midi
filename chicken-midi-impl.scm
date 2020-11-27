@@ -45,7 +45,7 @@
 
 (define-constant midi-ticks-per-quarter-note-field-length-in-bits 15)
 
-(define-constant midi-frames-per-sec-field-length 7)
+(define-constant midi-frames-per-sec-field-length-in-bits 7)
 
 (define-constant midi-ticks-per-frame-field-length-in-bits 8)
 
@@ -107,7 +107,7 @@
     (list
      'ticks-per-quarter-note ticks-per-quarter-note))
    (((1 1)
-     (frames-per-sec midi-frames-per-sec-field-length)
+     (frames-per-sec  midi-frames-per-sec-field-length-in-bits)
      (ticks-per-frame midi-ticks-per-frame-field-length-in-bits))
     (list
      'frames-per-sec
