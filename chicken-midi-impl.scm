@@ -1,4 +1,5 @@
-(define chicken-midi-debug 'on)
+;; Set chicken-midi-debug to #t to see some debugging information
+(define chicken-midi-debug #t)
 
 (define-constant bits-per-byte 8)
 
@@ -45,6 +46,12 @@
    midi-header-tracks-field-length-in-bytes
    midi-header-division-field-length-in-bytes))
 
+(define (midi-debug-printf s . args)
+  (when chicken-midi-debug
+    (if args
+        (apply printf s args)
+        (printf s))))
+
 (define (midi-read-file-as-bytevector filename)
   (if (file-exists? filename)
       (let ((size (file-size filename)))
@@ -87,9 +94,9 @@
       ((format tracks division rest)
        (let ((division (midi-parse-division division)))
          (midi-validate-format format)
-         (printf "format: '~S'~%" format)
-         (printf "tracks: '~S'~%" tracks)
-         (printf "division: '~S'~%" division))))))
+         (midi-debug-printf "format: '~S'~%" format)
+         (midi-debug-printf "tracks: '~S'~%" tracks)
+         (midi-debug-printf "division: '~S'~%" division))))))
 
 ;; For MIDI 1.1, the only valid formats are 0, 1, and 2
 (define (midi-validate-format format)
