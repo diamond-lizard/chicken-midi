@@ -19,7 +19,7 @@
 
 (define-constant bits-per-byte 8)
 
-;; For MIDI version 1.1, the chunk type must be:
+;; For MIDI version 1.1, the header's chunk type must be:
 (define-constant midi-header-chunk-type "MThd")
 (define midi-header-chunk-type-length-in-bytes
   (string-length midi-header-chunk-type))
