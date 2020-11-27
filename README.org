@@ -5,6 +5,10 @@ MIDI-related functions for Chicken Scheme
  * read MIDI files
 ** Procedures
 *** midi-read-file FILENAME
+Note: Only the MIDI file header is read as of version 0.1
+** TODO
+*** Read MIDI tracks
+*** Write MIDI file
 ** License
 Copyright (C) 2020 - Sergey Goldgaber
 
