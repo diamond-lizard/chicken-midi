@@ -67,6 +67,8 @@
             ;; though it should.  So we can't use a string here, but
             ;; are forced to use the equivalent hexadecimal number:
             (((#x4d546864 midi-header-chunk-type-length-in-bits)
+              ;; Again, the bitstring egg insists on a number for a pattern,
+              ;; so we can't use a variable here
               (6 midi-header-length-field-length-in-bits)
               (format midi-header-format-field-length-in-bits)
               (tracks midi-header-tracks-field-length-in-bits)
